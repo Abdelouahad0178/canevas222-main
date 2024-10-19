@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de Dessin</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Bibliothèques externes -->
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <!-- Importation de Hammer.js pour les gestes tactiles -->
+    
+    <script defer src="script.js"></script>
+    <!-- Votre script principal -->
+    
+</head>
+<body>
+    <div class="container">
+        <section class="tools-board">
+            <!-- Outils de dessin -->
+            <div class="row">
+               
+                <ul class="options">
+                    <li class="" id="rectangle">
+                        
+                        <span style="cursor: pointer;"> 🔲</span>
+                    </li>
+                    <li class="option tool" id="circle">
+                       
+                        <span> ⚪</span>
+                    </li>
+                    <li class="option tool" id="triangle">
+                        
+                        <span>🔺</span>
+                    </li>
+                    <li class="option tool" id="rectangle-fixed-height">
+                        <span>📏</span> <!-- Vous pouvez choisir une autre icône si vous préférez -->
+                    </li>
+                </ul>
+
+
+                <div class="fill-options">
+                    <label>
+                    
+                    <label>
+                        <input type="radio" name="shape-fill" value="hollow"> Vide
+                    </label>
+                    <input type="radio" name="shape-fill" value="filled" checked> Plein
+                </label>
+                </div>
+
+                <div id="canvas-resize-controls" class="row buttons" style="display: none;">
+                    <input type="number" id="resize-width-input" placeholder="Nouvelle largeur (px)" />
+                    <input type="number" id="resize-height-input" placeholder="Nouvelle hauteur (px)" /> <!-- Ajout de l'input pour la hauteur -->
+                    <button id="resize-width-btn">Redimensionner</button>
+                </div>
+
+
+
+            </div>
+            
+            <!-- Sélecteur de couleur pour les formes -->
+            <div class="row">
+                
+                <input type="color" id="shape-color-picker" value="#000000">
+            </div>
+
+            <!-- Remplissage de couleur (actuellement masqué) -->
+            <div class="row" style="display: none;">
+               
+                <input type="checkbox" id="fill-color">
+            </div>
+
+            <!-- Outils de pinceau et gomme -->
+            <div class="row">
+                
+                <ul class="options">
+                    <li class="option tool" id="brush">
+                        
+                        <span> 🖌️</span>
+                    </li>
+                    <li class="option tool" id="eraser">
+                        
+                        <span> 🩹</span>
+                    </li>
+
+
+                    <li class="option">
+                        <input type="range" id="size-slider" min="1" max="30" value="5">
+                    </li>
+                </ul>
+            </div>
+            
+<!-- Fenêtre d'Aperçu Avant Impression -->
+<div id="print-preview-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <button class="propre">Aperçu Avant Impression</button>
+        <img id="preview-image" src="" alt="Aperçu du Canevas">
+        <button id="print-btn">Imprimer</button>
+    </div>
+</div>
+
+
+
+
+
+
+
+            <!-- Palette de couleurs -->
+            <div class="row colors">
+                
+                <ul class="options">
+                    <li class="option" style="background-color: #ffffff;"></li>
+                    <li class="option selected" style="background-color: #000000;"></li>
+                    <li class="option" style="background-color: #E02020;"></li>
+                    <li class="option" style="background-color: #6DD400;"></li>
+                    <li class="option">
+                        <input type="color" id="color-picker" value="#4A98F7">
+                    </li>
+                </ul>
+            </div>
+
+
+            
+
+
+
+
+
+
+
+
+
+
+            <!-- Importer une image -->
+            <div class="row">
+                <label class="title">🖼️ Image</label>
+                <input type="file" id="upload-image" accept="image/*">
+            </div>
+
+            <!-- Ajouter du texte -->
+            <div class="row">
+                
+                <button id="add-text-btn">📝 Texte</button>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="row buttons">
+                <button class="clear-canvas">🗑️ Canevas</button>
+                <button class="save-img">💾 Image</button>
+            </div>
+
+            <div class="row buttons">
+                <button id="save-json">💾 JSON</button>
+                <input type="file" id="load-json" accept=".json" style="display: none;">
+                <label for="load-json" class="load-json-btn">📁 JSON</label>
+            </div>
+
+            <div class="row buttons">
+                <button id="delete-object">🗑️ Objet</button>
+            </div>
+
+            <div class="row buttons">
+                <button id="delete-measurement-text">🗑️ Texte </button>
+            </div>
+
+            <div class="row buttons">
+                <button id="show-calculator"> 🧮 Calculatrice</button>
+            </div>
+
+           
+
+
+
+            <!-- Bouton pour insérer un tableau -->
+            <button id="add-table-btn">  🧮 Tableau</button>
+
+            <div class="row buttons">
+                <button id="annuler-btn">↩️ Annuler</button>
+                <button id="rétablir-btn"> ↪️ Rétablir</button>
+            </div>
+
+            <!-- Bouton pour Aperçu Avant Impression -->
+            <div class="row buttons">
+                <button id="print-preview-btn">🖨️ Impression</button>
+            </div>
+
+
+
+
+
+
+
+            <!-- Palette de Photos -->
+            <div class="row buttons">
+                <button id="open-photo-palette-btn">📁 Photos</button>
+            </div>
+
+            <!-- Fenêtre Palette de Photos -->
+            <div id="photo-palette-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h2>Palette de Photos</h2>
+                    <input type="text" id="photo-search" placeholder="Rechercher des photos..." />
+                    <div id="photo-gallery" class="photo-gallery">
+                        <!-- Les photos seront chargées ici dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="drawing-board">
+            <canvas id="canvas"></canvas>
+        </section>
+    </div>
+
+    <!-- Fenêtre calculatrice -->
+    <div id="calculator-canvas" class="calculator" style="display: none;">
+        <h3 style="color: blue;">Calculatrice</h3>
+        <input type="text" id="canvas-calc-display" disabled>
+        <div class="calculator-buttons">
+            <button class="calc-btn">7</button>
+            <button class="calc-btn">8</button>
+            <button class="calc-btn">9</button>
+            <button class="calc-btn">/</button>
+            <button class="calc-btn">4</button>
+            <button class="calc-btn">5</button>
+            <button class="calc-btn">6</button>
+            <button class="calc-btn">*</button>
+            <button class="calc-btn">1</button>
+            <button class="calc-btn">2</button>
+            <button class="calc-btn">3</button>
+            <button class="calc-btn">-</button>
+            <button class="calc-btn">0</button>
+            <button class="calc-btn">.</button>
+            <button class="calc-btn">=</button>
+            <button class="calc-btn">+</button>
+            <button class="calc-btn" id="canvas-calc-clear">C</button>
+        </div>
+        <button id="close-canvas-calculator">Fermer</button>
+    </div>
+
+    <!-- Menu des propriétés de texte -->
+    <div id="text-properties-menu" class="text-properties" style="display:none;">
+        <label for="font-family">Police :</label>
+        <select id="font-family">
+            <option value="Arial">Arial</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Times New Roman">Times New Roman</option>
+        </select>
+
+        <label for="font-size">Taille :</label>
+        <input type="number" id="font-size" min="8" max="100" value="20">
+
+        <label for="font-weight">Poids :</label>
+        <select id="font-weight">
+            <option value="normal">Normal</option>
+            <option value="bold">Gras</option>
+        </select>
+
+        <label for="text-color">Couleur :</label>
+        <input type="color" id="text-color" value="#000000">
+    </div>
+
+
+
+
+</body>
+</html>
